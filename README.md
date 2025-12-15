@@ -5,6 +5,38 @@
 - ฝึกเขียน Stub/Driver/Spy
 - เข้าใจการแยกส่วนบริการ (Inventory, Payment, Shipping, Email) และการรวมระบบ
 
+### 1) Top-down Integration
+- Start from **OrderService**
+- Replace lower components with **Stubs / Spies**
+- Focus: workflow, error handling, orchestration
+
+Examples:
+- Payment fails → stock must be released
+- Email is sent after successful order
+
+---
+
+### 2) Bottom-up Integration
+- Start from **low-level components**
+- Use real implementations
+- Focus: correctness at boundaries
+
+Examples:
+- Inventory reserve/release
+- Edge cases (qty = 0, negative qty)
+
+---
+
+### 3) Sandwich (Hybrid)
+- Combine both approaches
+- Real middle components + stub/spy at edges
+
+Examples:
+- Real Payment + Spy Email
+- Verify shipping cost logic by region
+
+---
+
 วิธีเริ่มต้น
 1) ติดตั้ง dependencies
    pip install -r requirements.txt
@@ -24,6 +56,47 @@
      - เพิ่ม region อื่น (เช่น "US")
 - สรุปสิ่งที่ค้นพบสั้นๆ (5–10 บรรทัด)
 
+## What You Must Do (Checklist)
+
+### Read
+- `inventory.py`
+- `payment.py`
+- `shipping.py`
+- `emailer.py`
+- `order.py`
+
+### High-Level Call Graph
+OrderService
+ ├── InventoryRepository (InMemoryInventory)
+ │    ├── reserve()
+ │    └── release()
+ │
+ ├── ShippingService
+ │    └── cost()
+ │
+ ├── PaymentGateway (SimplePayment / Stub)
+ │    └── charge()
+ │
+ └── EmailService (Spy / Stub)
+      └── send()
+
+
+### Extend Tests (see TODOs)
+1. **Top-down**
+   - Add failing payment cases
+   - Verify email subject/body using Spy
+
+2. **Bottom-up**
+   - Add boundary tests for inventory errors
+
+3. **Sandwich**
+   - Test shipping cost for `"US"`
+   - Test weight > 5kg in `"TH"`
+
+### Reflect
+- Write **5–10 lines** summarizing:
+  - What broke?
+  - What integration risks you found?
 
 ---
 
