@@ -68,8 +68,8 @@ Examples:
 ### High-Level Call Graph
 OrderService  
 ├── InventoryRepository  
-│   ├── reserve()  
-│   └── release()  
+│       ├── reserve()  
+│       └── release()  
 │  
 ├── ShippingService  
 │   └── cost()  
